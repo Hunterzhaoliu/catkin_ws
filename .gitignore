@@ -1,0 +1,4 @@
+# generated from catkin_make to not add to github repo
+build
+devel
+install
