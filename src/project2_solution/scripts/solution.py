@@ -50,11 +50,6 @@ def publish_transforms():
     camera_transform.transform.rotation.w = camera_quaternion[3]
     br.sendTransform(camera_transform)
 
-    pub = rospy.Publisher('TF', tf.msg.tfMessage, queue_size = 10)
-    rate = rospy.Rate(10)
-
-    pub.publish(object_transform)
-
 if __name__ == '__main__':
     rospy.init_node('project2_solution')
 
