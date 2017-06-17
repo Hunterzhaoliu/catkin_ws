@@ -43,7 +43,7 @@ def publish_transforms():
     camera_transform.transform.translation.x = 0.0
     camera_transform.transform.translation.y = 0.1
     camera_transform.transform.translation.z = 0.1
-    camera_quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, 0.0)
+    camera_quaternion = tf.transformations.quaternion_from_euler(0.0, -.46, 0.0)
     camera_transform.transform.rotation.x = camera_quaternion[0]
     camera_transform.transform.rotation.y = camera_quaternion[1]
     camera_transform.transform.rotation.z = camera_quaternion[2]
