@@ -133,12 +133,7 @@ class ForwardKinematics(object):
         # listed in link_names
 
         rospy.loginfo('>>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
-        """
-        rospy.loginfo('@@@@@@@@@@@@@@ joints = [%s]' % ', '.join(map(str, joints)))
 
-        rospy.loginfo('++++++++++++++ joint_values.name = [%s]' % ', '.join(map(str, joint_values.name)))
-        rospy.loginfo('&&&&&&&&&&&&&& joint_values.position = [%s]' % ', '.join(map(str, joint_values.position)))
-        """
         # TODO: use convert_to_message
 
         all_transforms.transforms = []
@@ -146,22 +141,49 @@ class ForwardKinematics(object):
         roll = joints[0].origin.rpy[0]
         pitch = joints[0].origin.rpy[1]
         yaw = joints[0].origin.rpy[2]
-        rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
+        #rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
         T_J1_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
-        rospy.loginfo('T_J1_rotation_matrix = %s', T_J1_rotation_matrix)
+        #rospy.loginfo('T_J1_rotation_matrix = %s', T_J1_rotation_matrix)
 
         x = joints[0].origin.xyz[0]
         y = joints[0].origin.xyz[1]
         z = joints[0].origin.xyz[2]
-        rospy.loginfo('x = %s, y = %s, z = %s', x, y, z)
+        #rospy.loginfo('x = %s, y = %s, z = %s', x, y, z)
 
         T_J1_translation_matrix = tf.transformations.translation_matrix((x, y, z))
         T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
         rospy.loginfo('T_from_WL_to_CF1 = \n%s', T_from_WL_to_CF1)
 
         all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF1, link_names[0], "world_link"))
+
         # WL -> {2}
 
+        roll = joints[1].origin.rpy[0]
+        pitch = joints[1].origin.rpy[1]
+        yaw = joints[1].origin.rpy[2]
+        rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
+        T_J2_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
+        rospy.loginfo('T_J2_rotation_matrix = \n%s', T_J2_rotation_matrix)
+
+        #find the current joint name in joint_values.name
+        index_of_J2 = joint_values.name.index(joints[1].name)
+        #take that index and find the actual joint value in joint_values.position
+        q1 = joint_values.position[index_of_J2]
+        T_J2_rotation_matrix = numpy.multiply(q1, T_J2_rotation_matrix)
+        T_J2_rotation_matrix[3][3] = 1
+        rospy.loginfo('q1 = %s', q1)
+        x = joints[1].origin.xyz[0]
+        y = joints[1].origin.xyz[1]
+        z = joints[1].origin.xyz[2]
+        rospy.loginfo('x = %s, y = %s, z = %s', x, y, z)
+
+        T_J2_translation_matrix = tf.transformations.translation_matrix((x, y, z))
+        rospy.loginfo('T_J2_rotation_matrix = \n%s', T_J2_rotation_matrix)
+        rospy.loginfo('T_J2_translation_matrix = \n%s', T_J2_translation_matrix)
+        T_from_WL_to_CF2 = tf.transformations.concatenate_matrices(T_J2_rotation_matrix, T_J2_translation_matrix)
+        rospy.loginfo('T_from_WL_to_CF2 = \n%s', T_from_WL_to_CF2)
+
+        all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF2, link_names[1], "world_link"))
         # WL -> {3}
 
         # then generalize
