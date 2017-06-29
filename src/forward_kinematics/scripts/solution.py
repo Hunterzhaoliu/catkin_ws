@@ -126,26 +126,51 @@ class ForwardKinematics(object):
         all_transforms = tf.msg.tfMessage()
         # We start with the identity
         T = tf.transformations.identity_matrix() # T is a 4x4 matrix
+        #rospy.loginfo('$$$$$$$$$$$$$$ T = %s', T)
 
         # TODO: all_transforms.transforms needs to become a list of all transforms
         # from the world_link coordinate frame to each of the coordinate frames
         # listed in link_names
-        rospy.loginfo(rospy.get_caller_id() + ' >>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
-        rospy.loginfo(rospy.get_caller_id() + ' ++++++++++++++ joint_values.name = [%s]' % ', '.join(map(str, joint_values.name)))
-        rospy.loginfo(rospy.get_caller_id() + ' &&&&&&&&&&&&&& joint_values.position = [%s]' % ', '.join(map(str, joint_values.position)))
-        rospy.loginfo(rospy.get_caller_id() + ' &&&&&&&&&&&&&& T = %s', T)
+        """
+        rospy.loginfo('>>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
+        rospy.loginfo('@@@@@@@@@@@@@@ joints = [%s]' % ', '.join(map(str, joints)))
+
+        rospy.loginfo('++++++++++++++ joint_values.name = [%s]' % ', '.join(map(str, joint_values.name)))
+        rospy.loginfo('&&&&&&&&&&&&&& joint_values.position = [%s]' % ', '.join(map(str, joint_values.position)))
+        """
         # TODO: use convert_to_message
 
         all_transforms.transforms = []
+        # WL -> {1}
+        roll = joints[0].origin.rpy[0]
+        pitch = joints[0].origin.rpy[1]
+        yaw = joints[0].origin.rpy[2]
+        rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
+        T_J1_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
+        rospy.loginfo('T_J1_rotation_matrix = %s', T_J1_rotation_matrix)
+
+        x = joints[0].origin.xyz[0]
+        y = joints[0].origin.xyz[1]
+        z = joints[0].origin.xyz[2]
+        rospy.loginfo('x = %s, y = %s, z = %s', x, y, z)
+        #T_from_WL_to_CF1 =
+
+
+        # WL -> {2}
+
+        # WL -> {3}
+
+        # then generalize
+
         # = [ WL_T_L1, WL_T_L2 , ... , WL_T_L7]
-        for link_name in link_names:
+        #for link_name in link_names:
             # 1) compute transfrom from world_link to current link
 
             # WL to L1???
-            T_from_WL_to_current_link = T *
+            #T_from_WL_to_current_link = T *
 
             # 2) add it to all_transforms.transfroms
-            all_transforms.transfroms.append(convert_to_message(T_from_WL_to_current_link, TODO: child, TODO: parent))
+            #all_transforms.transfroms.append(convert_to_message(T_from_WL_to_current_link, link_name, "world_link"))
 
         return all_transforms
 
