@@ -131,8 +131,9 @@ class ForwardKinematics(object):
         # TODO: all_transforms.transforms needs to become a list of all transforms
         # from the world_link coordinate frame to each of the coordinate frames
         # listed in link_names
-        """
+
         rospy.loginfo('>>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
+        """
         rospy.loginfo('@@@@@@@@@@@@@@ joints = [%s]' % ', '.join(map(str, joints)))
 
         rospy.loginfo('++++++++++++++ joint_values.name = [%s]' % ', '.join(map(str, joint_values.name)))
@@ -158,7 +159,7 @@ class ForwardKinematics(object):
         T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
         rospy.loginfo('T_from_WL_to_CF1 = \n%s', T_from_WL_to_CF1)
 
-
+        all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF1, link_names[0], "world_link"))
         # WL -> {2}
 
         # WL -> {3}
