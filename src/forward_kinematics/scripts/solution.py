@@ -153,7 +153,10 @@ class ForwardKinematics(object):
         y = joints[0].origin.xyz[1]
         z = joints[0].origin.xyz[2]
         rospy.loginfo('x = %s, y = %s, z = %s', x, y, z)
-        #T_from_WL_to_CF1 =
+
+        T_J1_translation_matrix = tf.transformations.translation_matrix((x, y, z))
+        T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
+        rospy.loginfo('T_from_WL_to_CF1 = \n%s', T_from_WL_to_CF1)
 
 
         # WL -> {2}
