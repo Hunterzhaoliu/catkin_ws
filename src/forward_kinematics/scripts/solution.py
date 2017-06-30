@@ -186,6 +186,7 @@ class ForwardKinematics(object):
         """
         # then generalize
 
+        all_non_message_transforms = []
         # = [ WL_T_L1, WL_T_L2 , ... , WL_T_L7]
         for link_name in link_names:
             # 1) compute transfrom from world_link to current link
@@ -203,6 +204,7 @@ class ForwardKinematics(object):
                 T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
 
                 all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF1, link_name, "world_link"))
+                all_non_message_transforms.append(T_from_WL_to_CF1)
 
             else:
                 current_joint_index = link_names.index(link_name)
@@ -222,7 +224,8 @@ class ForwardKinematics(object):
                 T_current_joint_translation_matrix = tf.transformations.translation_matrix((x, y, z))
 
                 T_from_WL_to_CF_i = tf.transformations.concatenate_matrices(T_current_joint_rotation_matrix, T_current_joint_translation_matrix)
-
+                T_from_WL_to_CF_i = numpy.matmul(T_from_WL_to_CF_i, all_non_message_transforms[current_joint_index-1])
+                all_non_message_transforms.append(T_from_WL_to_CF_i)
                 all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF_i, link_name, "world_link"))
 
             # WL to L1???
