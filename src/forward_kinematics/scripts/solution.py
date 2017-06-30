@@ -190,15 +190,14 @@ class ForwardKinematics(object):
         for link_name in link_names:
             # 1) compute transfrom from world_link to current link
             if len(all_transforms.transforms) == 0:
-                current_joint_index = 0
-                roll = joints[current_joint_index].origin.rpy[0]
-                pitch = joints[current_joint_index].origin.rpy[1]
-                yaw = joints[current_joint_index].origin.rpy[2]
+                roll = joints[0].origin.rpy[0]
+                pitch = joints[0].origin.rpy[1]
+                yaw = joints[0].origin.rpy[2]
                 T_J1_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
 
-                x = joints[current_joint_index].origin.xyz[0]
-                y = joints[current_joint_index].origin.xyz[1]
-                z = joints[current_joint_index].origin.xyz[2]
+                x = joints[0].origin.xyz[0]
+                y = joints[0].origin.xyz[1]
+                z = joints[0].origin.xyz[2]
                 T_J1_translation_matrix = tf.transformations.translation_matrix((x, y, z))
 
                 T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
@@ -206,7 +205,7 @@ class ForwardKinematics(object):
                 all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF1, link_name, "world_link"))
 
             else:
-                current_joint_index = 1
+                current_joint_index = link_names.index(link_name)
                 roll = joints[current_joint_index].origin.rpy[0]
                 pitch = joints[current_joint_index].origin.rpy[1]
                 yaw = joints[current_joint_index].origin.rpy[2]
@@ -225,8 +224,6 @@ class ForwardKinematics(object):
                 T_from_WL_to_CF_i = tf.transformations.concatenate_matrices(T_current_joint_rotation_matrix, T_current_joint_translation_matrix)
 
                 all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF_i, link_name, "world_link"))
-
-                current_joint_index += 1
 
             # WL to L1???
             #T_from_WL_to_current_link = T *
