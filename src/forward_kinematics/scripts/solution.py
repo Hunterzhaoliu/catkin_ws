@@ -161,17 +161,15 @@ class ForwardKinematics(object):
         roll = joints[1].origin.rpy[0]
         pitch = joints[1].origin.rpy[1]
         yaw = joints[1].origin.rpy[2]
-        rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
-        T_J2_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
-        rospy.loginfo('T_J2_rotation_matrix = \n%s', T_J2_rotation_matrix)
-
         #find the current joint name in joint_values.name
         index_of_J2 = joint_values.name.index(joints[1].name)
         #take that index and find the actual joint value in joint_values.position
         q1 = joint_values.position[index_of_J2]
-        T_J2_rotation_matrix = numpy.multiply(q1, T_J2_rotation_matrix)
-        T_J2_rotation_matrix[3][3] = 1
         rospy.loginfo('q1 = %s', q1)
+        #rospy.loginfo('roll = %s, pitch = %s, yaw = %s', roll, pitch, yaw)
+        T_J2_rotation_matrix = tf.transformations.euler_matrix(roll * q1, pitch * q1, yaw * q1, 'sxyz')
+        rospy.loginfo('T_J2_rotation_matrix = \n%s', T_J2_rotation_matrix)
+
         x = joints[1].origin.xyz[0]
         y = joints[1].origin.xyz[1]
         z = joints[1].origin.xyz[2]
