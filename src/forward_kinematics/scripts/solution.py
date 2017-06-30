@@ -132,12 +132,13 @@ class ForwardKinematics(object):
         # from the world_link coordinate frame to each of the coordinate frames
         # listed in link_names
 
-        rospy.loginfo('>>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
+        #rospy.loginfo('>>>>>>>>>>>>>> link_names = [%s]' % ', '.join(map(str, link_names)))
 
         # TODO: use convert_to_message
 
-        all_transforms.transforms = []
+        #all_transforms.transforms = []
         # WL -> {1}
+        """
         roll = joints[0].origin.rpy[0]
         pitch = joints[0].origin.rpy[1]
         yaw = joints[0].origin.rpy[2]
@@ -182,13 +183,50 @@ class ForwardKinematics(object):
         rospy.loginfo('T_from_WL_to_CF2 = \n%s', T_from_WL_to_CF2)
 
         all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF2, link_names[1], "world_link"))
-        # WL -> {3}
-
+        """
         # then generalize
 
         # = [ WL_T_L1, WL_T_L2 , ... , WL_T_L7]
-        #for link_name in link_names:
+        for link_name in link_names:
             # 1) compute transfrom from world_link to current link
+            if len(all_transforms.transforms) == 0:
+                current_joint_index = 0
+                roll = joints[current_joint_index].origin.rpy[0]
+                pitch = joints[current_joint_index].origin.rpy[1]
+                yaw = joints[current_joint_index].origin.rpy[2]
+                T_J1_rotation_matrix = tf.transformations.euler_matrix(roll, pitch, yaw, 'sxyz')
+
+                x = joints[current_joint_index].origin.xyz[0]
+                y = joints[current_joint_index].origin.xyz[1]
+                z = joints[current_joint_index].origin.xyz[2]
+                T_J1_translation_matrix = tf.transformations.translation_matrix((x, y, z))
+
+                T_from_WL_to_CF1 = tf.transformations.concatenate_matrices(T_J1_rotation_matrix, T_J1_translation_matrix)
+
+                all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF1, link_name, "world_link"))
+
+            else:
+                current_joint_index = 1
+                roll = joints[current_joint_index].origin.rpy[0]
+                pitch = joints[current_joint_index].origin.rpy[1]
+                yaw = joints[current_joint_index].origin.rpy[2]
+
+                index_of_current_joint = joint_values.name.index(joints[current_joint_index].name)
+                q_i = joint_values.position[index_of_current_joint]
+
+                T_current_joint_rotation_matrix = tf.transformations.euler_matrix(roll * q_i, pitch * q_i, yaw * q_i, 'sxyz')
+
+                x = joints[current_joint_index].origin.xyz[0]
+                y = joints[current_joint_index].origin.xyz[1]
+                z = joints[current_joint_index].origin.xyz[2]
+
+                T_current_joint_translation_matrix = tf.transformations.translation_matrix((x, y, z))
+
+                T_from_WL_to_CF_i = tf.transformations.concatenate_matrices(T_current_joint_rotation_matrix, T_current_joint_translation_matrix)
+
+                all_transforms.transforms.append(convert_to_message(T_from_WL_to_CF_i, link_name, "world_link"))
+
+                current_joint_index += 1
 
             # WL to L1???
             #T_from_WL_to_current_link = T *
