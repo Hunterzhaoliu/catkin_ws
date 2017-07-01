@@ -212,8 +212,8 @@ class ForwardKinematics(object):
                 pitch = joints[current_joint_index].origin.rpy[1]
                 yaw = joints[current_joint_index].origin.rpy[2]
 
-                index_of_current_joint = joint_values.name.index(joints[current_joint_index].name)
-                q_i = joint_values.position[index_of_current_joint]
+                index_of_q_i = joint_values.name.index(joints[current_joint_index].name)
+                q_i = joint_values.position[index_of_q_i]
 
                 T_current_joint_rotation_matrix = tf.transformations.euler_matrix(roll * q_i, pitch * q_i, yaw * q_i, 'sxyz')
 
