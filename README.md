@@ -37,3 +37,5 @@ Learning how to compute coordinate transforms between the world_link to other li
 4. In a new terminal `rosrun robot_mover mover`
 5. In a new terminal `rosrun forward_kinematics solution.py`
 6. In a new terminal `rosrun rviz rviz`
+
+![alt text](https://user-images.githubusercontent.com/24757872/27772884-acb29b1e-5f30-11e7-9bab-ed3402e1c2d6.png)
