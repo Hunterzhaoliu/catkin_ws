@@ -126,23 +126,23 @@ class ForwardKinematics(object):
         all_transforms = tf.msg.tfMessage()
         # We start with the identity
         T = tf.transformations.identity_matrix() # T is a 4x4 matrix
-        index = 0
-        #rospy.loginfo('joint_axis = %s', joints[1].axis)
+        i = 0 #index of current joint
+
         for link in link_names:
 
-            if index == 0:
+            if i == 0:
                 T = tf.transformations.translation_matrix(joints[0].origin.xyz)
                 all_transforms.transforms.append(convert_to_message(T, link, 'world_link'))
-                index += 1
+                i += 1
             else:
-                index_of_q_i = joint_values.name.index(joints[index].name)
+                index_of_q_i = joint_values.name.index(joints[i].name)
                 q_i = joint_values.position[index_of_q_i]
-                T_WL_CF_i_rotation_matrix = tf.transformations.rotation_matrix(q_i, joints[index].axis)
-                T_WL_CF_i_translation_matrix = tf.transformations.translation_matrix(joints[index].origin.xyz)
+                T_WL_CF_i_rotation_matrix = tf.transformations.rotation_matrix(q_i, joints[i].axis)
+                T_WL_CF_i_translation_matrix = tf.transformations.translation_matrix(joints[i].origin.xyz)
                 T_WL_CF_i = tf.transformations.concatenate_matrices(T_WL_CF_i_translation_matrix, T_WL_CF_i_rotation_matrix)
                 T = tf.transformations.concatenate_matrices(T, T_WL_CF_i)
                 all_transforms.transforms.append(convert_to_message(T, link, "world_link"))
-                index += 1
+                i += 1
         return all_transforms
 
 if __name__ == '__main__':
