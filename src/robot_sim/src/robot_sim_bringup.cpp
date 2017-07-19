@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   robot->init();
   boost::shared_ptr<robot_sim::JointStatePublisher> publisher(new robot_sim::JointStatePublisher(robot));
   double rate;
-  priv_nh.param<double>("joint_pub_rate", rate, 0.1);
+  priv_nh.param<double>("joint_pub_rate", rate, 0.01);
   if (!publisher->init(rate))
   {
     ROS_ERROR("Failed to initialize publisher");

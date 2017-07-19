@@ -39,3 +39,18 @@ Learning how to compute coordinate transforms between the world_link to other li
 6. In a new terminal `rosrun rviz rviz`
 
 ![alt text](https://user-images.githubusercontent.com/24757872/27772884-acb29b1e-5f30-11e7-9bab-ed3402e1c2d6.png)
+
+## Project 4 Cartesian Control
+Learn how to compute joint (q) velocity given initial base to end effector transform and desired base to end effector transform.
+
+### Run Instructions
+1. `roscore`
+2. In a new terminal in home directory `rosparam set robot_description --textfile kuka_lwr_arm.urdf`
+3. In the same terminal `rosrun robot_sim robot_sim_bringup`
+4. In a new terminal `rosrun robot_state_publisher robot_state_publisher`
+5. In a new terminal `rosrun cartesian_control marker_control.py`
+6. In a new terminal `rosrun cartesian_control cartesian_control.py`
+7. In a new termianl `rosrun rviz rviz`
+8. In rviz change Fixed Frame to world link_name
+9. In rviz click Add and select RobotModel
+10. In rviz click Add and select "InteractiveMarkers"
