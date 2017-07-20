@@ -73,9 +73,11 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     #finding pseudo_inverse of the jacobian
     J_+ = numpy.linalg.pinv(J, 0.1)
 
-    #multiplying pseudo_inverse of jacobian with v_ee to find jiont velocity
-    
+    #multiplying pseudo_inverse of jacobian with v_ee to find joint velocity
+    q_v = numpy.dot(J_+, v_ee)
 
+    #replacing empty dq list with joint velocity
+    dq = tf.transformations.concatenate(dq, q_v)
 
     #----------------------------------------------------------------------
     return dq
