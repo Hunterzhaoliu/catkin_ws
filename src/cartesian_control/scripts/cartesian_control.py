@@ -38,7 +38,13 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     b_ee_rot_v = 1.0 * rot_intermediate_T
     b_ee_v = numpy.concatenate((b_ee_trans_v, be_ee_rot_v), axis = 0)
 
-    #
+    #extracting rotation matrix from b_T_ee_desired
+    rot_b_T_ee = b_T_ee_desired[:3, :3]
+    #find rot_ee_T_b
+    rot_ee_T_b = tf.transformations.inverse_matrix(rot_ee_T_b)
+    base_transformation = numpy.zeros((6,6))
+    base_transformation[:3, :3] = rot_ee_T_b
+    base_transfromation[3:, 3:] = rot_ee_T_b
     #----------------------------------------------------------------------
     return dq
 
