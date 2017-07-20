@@ -49,6 +49,34 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     #multiply base_transformation with b_ee_v to get v_ee
     v_ee = numpy.dot(base_transformation, b_ee_v)
 
+    #find the jacobian
+    J = []
+    V_j = numpy.zeros((6,6))
+    for joint in joint_transforms:
+        j_rot_ee = joint[:3, :3]
+        j_trans_ee = tf.transformations.translation_from_matrix(joint)
+
+        #finding rotation transformation from ee to joint
+        ee_rot_j = tf.transformations.inverse_matrix(j_rot_ee)
+
+        #finding skew symmetric matrix of translation transformation from joint to ee
+        S_j_trans_ee = S_matrix(j_trans_ee)
+
+        #resetting V_j
+        V_j[:3, :3] = ee_rot_j
+        V_j[3:, 3:] = ee_rot_j
+        V_j[:3, 3:] = numpy.dot(-1 * ee_rot_j, S_j_trans_ee)
+
+        #forming jacobian
+        J.append(V_j[:, 5])
+
+    #finding pseudo_inverse of the jacobian
+    J_+ = numpy.linalg.pinv(J, 0.1)
+
+    #multiplying pseudo_inverse of jacobian with v_ee to find jiont velocity
+    
+
+
     #----------------------------------------------------------------------
     return dq
 
