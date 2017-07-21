@@ -34,9 +34,14 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     rot_intermediate_T = rotation_from_matrix(intermediate_T)
 
     #multiplying by proportoinality constant where b_ee_trans_v = end effector translation velocity relative to the base
-    b_ee_trans_v = 0.5 * trans_intermediate_T
+    b_ee_trans_v = 1 * trans_intermediate_T
     b_ee_rot_v = 2 * rot_intermediate_T
-    b_ee_v = numpy.concatenate((b_ee_trans_v, b_ee_rot_v), axis = 0)
+    b_ee_v = []
+    for each_int in b_ee_trans_v:
+        b_ee_v.append(each_int)
+    for each_num in b_ee_trans_v:
+        b_ee_v.append(each_num)
+    b_ee_v = numpy.asarray(b_ee_v)
 
     #extracting rotation matrix from b_T_ee_desired
     b_rot_ee = b_T_ee_desired[:3, :3]
