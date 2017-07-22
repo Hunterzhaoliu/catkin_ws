@@ -25,8 +25,8 @@ def S_matrix(w):
 # This is the function that must be filled in as part of the Project.
 def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
                       red_control, q_current, q0_desired):
-    num_joints = len(joint_transforms)
-    dq = numpy.zeros(num_joints)
+    #num_joints = len(joint_transforms)
+    #dq = numpy.zeros(num_joints)
     #-------------------- Fill in your code here ---------------------------
     inverse_b_T_ee_current = tf.transformations.inverse_matrix(b_T_ee_current)
     intermediate_T = numpy.dot(inverse_b_T_ee_current, b_T_ee_desired)
@@ -77,15 +77,20 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
 
     #finding pseudo_inverse of the jacobian
     J_pinv = numpy.linalg.pinv(J, 0.1)
-
-    #multiplying pseudo_inverse of jacobian with v_ee to find joint velocity
-    q_v = numpy.dot(J_pinv, v_ee)
+    #taking the dot product of the pseudo_inverse of jacobian with v_ee to find joint velocity
+    q_v = []
+    v_ee = v_ee.reshape(6, 1)
+    rospy.loginfo("v_ee = %s", v_ee)
+    for index in range(7):
+        #finding the column of J_pinv
+        current_q = numpy.dot(J_pinv[:, index], v_ee)
+        q_v.append(current_q)
 
     #replacing empty dq list with joint velocity
     dq = tf.transformations.concatenate(dq, q_v)
-    rospy.loginfo("cartesian_control is running")
     #----------------------------------------------------------------------
     return dq
+
 
 def convert_from_message(t):
     trans = tf.transformations.translation_matrix((t.translation.x,
