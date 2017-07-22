@@ -35,7 +35,7 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
 
     #multiplying by proportoinality constant where b_ee_trans_v = end effector translation velocity relative to the base
     b_ee_trans_v = 15 * trans_intermediate_T
-    b_ee_rot_v = 10 * rot_intermediate_T
+    b_ee_rot_v = 20 * rot_intermediate_T
     b_ee_v = []
     for each_int in b_ee_trans_v:
         b_ee_v.append(each_int)
@@ -84,6 +84,19 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
         #finding the column of J_pinv
         current_q = numpy.dot(J_pinv[:, index], v_ee)
         dq[index] = current_q
+
+    J_pinv_dot_J = numpy.dot(J, J_pinv)
+    rospy.loginfo("J dimensions = %s", numpy.shape(J))
+    rospy.loginfo("J_pinv dimensions = %s", numpy.shape(J_pinv))
+    rospy.loginfo("J_pinv_dot_J = %s", numpy.shape(J_pinv_dot_J))
+    if red_control == True:
+        q_dot = numpy.zeros((7,1))
+        q_dot[0] = q0_desired - q_current[0]
+        rospy.loginfo("q_dot = %s", q_dot)
+        #calculating the nullspace q velocity
+        q_dot_n = numpy.dot(numpy.identity(7) - J_pinv_dot_J, q_dot)
+        dq = dq + q_dot_n
+
     #----------------------------------------------------------------------
     return dq
 
