@@ -34,8 +34,8 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     rot_intermediate_T = rotation_from_matrix(intermediate_T)
 
     #multiplying by proportoinality constant where b_ee_trans_v = end effector translation velocity relative to the base
-    b_ee_trans_v = 1 * trans_intermediate_T
-    b_ee_rot_v = 2 * rot_intermediate_T
+    b_ee_trans_v = 15 * trans_intermediate_T
+    b_ee_rot_v = 10 * rot_intermediate_T
     b_ee_v = []
     for each_int in b_ee_trans_v:
         b_ee_v.append(each_int)
@@ -77,18 +77,13 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
 
     #finding pseudo_inverse of the jacobian
     J_pinv = numpy.linalg.pinv(J, 0.1)
+
     #taking the dot product of the pseudo_inverse of jacobian with v_ee to find joint velocity
-    #q_v = []
     v_ee = v_ee.reshape(6, 1)
     for index in range(7):
         #finding the column of J_pinv
         current_q = numpy.dot(J_pinv[:, index], v_ee)
         dq[index] = current_q
-
-    #replacing empty dq list with joint velocity
-    #q_v = numpy.asarray(q_v)
-    rospy.loginfo("dq = %s", dq)
-    #dq = tf.transformations.concatenate(dq, q_v)
     #----------------------------------------------------------------------
     return dq
 
