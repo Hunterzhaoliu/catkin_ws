@@ -86,17 +86,18 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
         dq[index] = current_q
 
     J_pinv_dot_J = numpy.dot(J, J_pinv)
-    rospy.loginfo("J dimensions = %s", numpy.shape(J))
-    rospy.loginfo("J_pinv dimensions = %s", numpy.shape(J_pinv))
-    rospy.loginfo("J_pinv_dot_J = %s", numpy.shape(J_pinv_dot_J))
+
     if red_control == True:
         q_dot = numpy.zeros((7,1))
         q_dot[0] = q0_desired - q_current[0]
-        rospy.loginfo("q_dot = %s", q_dot)
         #calculating the nullspace q velocity
         q_dot_n = numpy.dot(numpy.identity(7) - J_pinv_dot_J, q_dot)
-        dq = dq + q_dot_n
+        rospy.loginfo("q_dot_n dimensions = %s", numpy.shape(q_dot_n))
+        rospy.loginfo("dq dimensions = %s", numpy.shape(dq))
+        rospy.loginfo("q_dot type = %s", type(q_dot_n))
 
+        for i, current_q_dot_n in enumerate(q_dot_n):
+            dq[i] = current_q_dot_n
     #----------------------------------------------------------------------
     return dq
 
