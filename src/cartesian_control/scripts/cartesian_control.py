@@ -80,17 +80,20 @@ def cartesian_control(joint_transforms, b_T_ee_current, b_T_ee_desired,
     #taking the dot product of the pseudo_inverse of jacobian with v_ee to find joint velocity
     q_v = []
     v_ee = v_ee.reshape(6, 1)
-    rospy.loginfo("v_ee = %s", v_ee)
     for index in range(7):
         #finding the column of J_pinv
         current_q = numpy.dot(J_pinv[:, index], v_ee)
         q_v.append(current_q)
 
     #replacing empty dq list with joint velocity
-    dq = tf.transformations.concatenate(dq, q_v)
+    rospy.loginfo("q_v = %s", q_v)
+    #rospy.loginfo("dq type = %s", type(dq))
+    q_v = numpy.asarray(q_v)
+    rospy.loginfo("q_v type = %s", type(q_v))
+    #dq = tf.transformations.concatenate(dq, q_v)
     #----------------------------------------------------------------------
-    return dq
-
+    #return dq
+    return q_v
 
 def convert_from_message(t):
     trans = tf.transformations.translation_matrix((t.translation.x,
