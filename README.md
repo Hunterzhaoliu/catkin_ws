@@ -54,3 +54,5 @@ Learn how to compute joint (q) velocity given initial base to end effector trans
 8. In rviz change Fixed Frame to world link_name
 9. In rviz click Add and select RobotModel
 10. In rviz click Add and select "InteractiveMarkers"
+
+![alt text](https://user-images.githubusercontent.com/24757872/28757775-c65f6b98-754f-11e7-9f7b-51f2372a5578.png)
